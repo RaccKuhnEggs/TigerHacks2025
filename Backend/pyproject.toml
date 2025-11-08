@@ -1,0 +1,18 @@
+[build-system]
+requires = ["fastapi", "uvicorn"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Space App Backend"
+version = "0.1.0"
+description = "Backend for our Tiger Hacks 2025 project"
+readme = "README.md"
+dynamic = ["version"]
+authors = [
+    {name = "Supreet Aradhya", email = "aradhyasupreet@gmail.com"}
+    {name = "Carter Thoe", email = "carterthoe@protonmail.com"}
+    {name = "Ashton Kuhn", email = "ashtonkuhn75@icloud.com"}
+]
+
+[tools.setuptools.packages.find]
+where = ["src"]
