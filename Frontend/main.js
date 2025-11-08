@@ -16,7 +16,7 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-
+/*
 //add ambient white light to scene so we can see gltf objects
 const light = new THREE.AmbientLight(0xFFFFFF, 1);
 scene.add(light);
@@ -47,7 +47,7 @@ loader.load( '/Globe.glb', function ( gltf ) {
 
 } );
 
-
+*/
 
 //---------------Test Items-------------------//
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -56,10 +56,11 @@ const cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
 camera.position.z = 10;
+/*
 const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 5, 0);
 controls.update();
-
+*/
 //loop of what is rendered every frame
 //anything that happens every frame should be in here
 function animate() {
