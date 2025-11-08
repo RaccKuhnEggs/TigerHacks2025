@@ -6,7 +6,7 @@ from api_client import __URL_BASE__, __URL__, API_connection_test
 
 if not API_connection_test(__URL__): 
     print(f"[!INIT ERROR!] API connection test failed during package initialization.\n")
-    __connection__status__ = False
+    API__connection__status__ = False
 else:
     print(f"[INIT] API connection test succeeded during package initialization.")
-    __connection__status__ = True
+    API__connection__status__ = True
