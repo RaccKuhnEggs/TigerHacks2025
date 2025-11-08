@@ -3,8 +3,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 //allows camera orbiting
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-//lets us cut the background out of the globe model
-import { VolumeSlice } from 'three/addons/misc/VolumeSlice.js';
+//lets us load ISS because its compressed terribly
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
 
 //initialize scene
 const scene = new THREE.Scene();
@@ -20,11 +21,20 @@ const renderer = new THREE.WebGLRenderer({canvas : canvas});
 renderer.setSize( window.innerWidth, window.innerHeight );
 
 //add ambient white light to scene so we can see gltf objects
-const light = new THREE.DirectionalLight(0xFFFFFF, 1);
-light.position.set(4,4,4);
-scene.add(light);
+const sun = new THREE.DirectionalLight(0xFFFFFF, 1);
+sun.position.set(4,4,4);
+scene.add(sun);
+const Alight = new THREE.AmbientLight(0xFFFFFF, 0.6);
+scene.add(Alight);
+
+//initialize draco to decompress ISS
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+dracoLoader.setDecoderConfig({ type: 'js' });
+
 
 const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
 
 //ensures loaded globe is global so we can manipulate it later
 let globe;
@@ -43,6 +53,7 @@ const clippingPlanes = [
 // Enable clipping on renderer
 renderer.localClippingEnabled = true;
 
+//load globe
 loader.load( '/Globe.glb', function ( gltf ) {
     globe = gltf.scene;
     globe.position.set(0,-1,0);
@@ -55,7 +66,40 @@ loader.load( '/Globe.glb', function ( gltf ) {
         }
     });
 
+    //size of globe n stuff
+    const globebox = new THREE.Box3().setFromObject(globe);
+    const globesize = globebox.getSize(new THREE.Vector3());
+    const globecenter = globebox.getCenter(new THREE.Vector3());
+    console.log('Globe original size:', globesize);
+    console.log('Globe center:', globecenter);
+
     scene.add( globe );
+
+}, undefined, function ( error ) {
+
+    console.error( error );
+
+} );
+
+let ISS;
+
+loader.load( '/ISS.glb', function ( gltf ) {
+    ISS = gltf.scene;
+    ISS.position.set(0,0,0);
+    ISS.scale.set(1,1,1);
+
+    
+    ISS.traverse((child) => {
+        if (child.isMesh) {
+            // Reduce texture size if needed
+            if (child.material.map) {
+                child.material.map.minFilter = THREE.LinearFilter;
+            }
+            // Enable frustum culling
+            child.frustumCulled = true;
+        }
+    });
+    scene.add( ISS );
 
 }, undefined, function ( error ) {
 
@@ -75,6 +119,8 @@ scene.add( cube );
 camera.position.z = 2;
 
 const controls = new OrbitControls(camera,canvas);
+controls.minDistance=.91;
+controls._pan=false;
 controls.target.set(0, 0, 0);
 controls.update();
 
