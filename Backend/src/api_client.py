@@ -9,8 +9,8 @@ def API_connection_test(URL):
     response = requests.get(URL)
     if response.status_code == 200: #connection successful
         data = response.json()
-        print(f"API Client initialized successfully.\nData received: {data}")
+        print(f"[API CLIENT] API Client initialized successfully.\nData received: {data}")
         return True
     else: #connection failed
-        print(f"Failed to initialize API Client. Status code: {response.status_code}: {response.text}")
+        print(f"[!API CLIENT ERROR!] Failed to initialize API Client. Status code: {response.status_code}: {response.text}")
         return False
