@@ -3,6 +3,8 @@ requires = [
     "fastapi", 
     "uvicorn",
     "requests",
+    "python-dotenv",
+    "spacetrack",
     ]
 build-backend = "setuptools.build_meta"
 
