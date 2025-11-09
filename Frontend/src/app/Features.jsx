@@ -21,7 +21,7 @@ function Features() {
     {
       icon: "🌐",
       title: "Global Coverage",
-      description: "Our data tracks ksatellites all across the globe.",
+      description: "Our data tracks satellites all across the globe.",
       highlight: "Comprehensive"
     }
   ];
