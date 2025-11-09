@@ -3,15 +3,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-<<<<<<< HEAD
-<<<<<<< HEAD:Frontend/src/app/satellite_visualizer.jsx
-import { calculateSatellitePosition, createOrbitPath, ISS_PARAMS } from './sat_placer';
-=======
-import { calculateSatellitePosition, createOrbitPath, updateSatellitePosition, ISS_PARAMS } from './SatPlacer';
->>>>>>> 3c2dc9b (Fixes for sat viewer):Frontend/src/app/SatelliteVisualizer.jsx
-=======
 import { calculateSatellitePosition, createOrbitPath, updateSatellitePosition, ISS_PARAMS } from './Sat_placer.jsx';
->>>>>>> 61693b3 (added loading)
+
 
 export default function SatelliteVisualizer() {
   const mountRef = useRef(null);
