@@ -5,6 +5,14 @@ import uvicorn
 
 app = FastAPI()
 
+app.add_middleware(
+    FastAPI.CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 async def root():
     #return{"Hello": "World"}
@@ -21,6 +29,17 @@ async def get_satcat_data(limit: int = 100):
         return {"error": "Failed to retrieve SATCAT data."}
     
     return {"satcat_data": satcat_data}
+
+@app.get("/tle")
+async def get_tle_data(limit: int = 100):
+    if not src.API__connection__status__:
+        return {"error": "API connection is not active."}
+    tle_data = API.get_all_tle_data(limit=limit)
+    if tle_data is None:
+        return {"error": "Failed to retrieve TLE data."}
+    
+    return {"tle_data": tle_data}
+
 
 @app.get("/satcat/{type_name}")
 async def get_satcat_by_type(type_name: str, limit: int = 100):

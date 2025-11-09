@@ -37,6 +37,40 @@ def merge_satcat_and_tle(satcat_data, tle_data):
 
 
 # ----- API DATA QUERIES -----
+def get_all_tle_data(limit=None):
+    stc = get_stc()
+    try:
+        tle_data = stc.tle_latest(
+            format="json",
+            limit=limit,
+            predicates=[
+                "NORAD_CAT_ID",
+                "OBJECT_NAME",
+                "OBJECT_TYPE",
+                "EPOCH",
+                "INCLINATION",
+                "RA_OF_ASC_NODE",
+                "ECCENTRICITY",
+                "ARG_OF_PERICENTER",
+                "MEAN_ANOMALY",
+                "MEAN_MOTION",
+                "APOGEE",
+                "PERIGEE",
+                "PERIOD"
+            ]
+        )
+
+        if isinstance(tle_data, str):
+            tle_data = json.loads(tle_data)
+
+        print(f"[API HANDLER] Retrieved TLE data. Records: {len(tle_data)}")
+        return tle_data
+
+    except Exception as e:
+        print(f"[!API HANDLER ERROR!] Exception during TLE query: {e}")
+        return None
+
+
 def get_all_active_SATCAT(limit=None):
     stc=get_stc()
     try:
