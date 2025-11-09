@@ -1,0 +1,10 @@
+fastapi[standard]
+uvicorn[standard]
+requests
+python-dotenv
+spacetrack
+skyfield
+
+[test]
+pytest
+pytest-cov

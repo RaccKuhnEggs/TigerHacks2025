@@ -1,21 +1,26 @@
 [build-system]
 requires = [
-    "fastapi", 
-    "uvicorn",
-    "requests",
-    ]
+    "setuptools",
+    "wheel"
+]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Space App Backend"
+name = "LiteView_Backend"
 version = "0.1.0"
 description = "Backend for our Tiger Hacks 2025 project"
 readme = "README.md"
-dynamic = ["version"]
 authors = [
-    {name = "Supreet Aradhya", email = "aradhyasupreet@gmail.com"}
-    {name = "Carter Thoe", email = "carterthoe@protonmail.com"}
+    {name = "Supreet Aradhya", email = "aradhyasupreet@gmail.com"},
+    {name = "Carter Thoe", email = "carterthoe@protonmail.com"},
     {name = "Ashton Kuhn", email = "ashtonkuhn75@icloud.com"}
+]
+dependencies = [
+    "fastapi[standard]", 
+    "uvicorn[standard]",
+    "requests",
+    "python-dotenv",
+    "spacetrack",
 ]
 
 [project.optional-dependencies]
