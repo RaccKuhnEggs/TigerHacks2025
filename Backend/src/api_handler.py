@@ -8,6 +8,34 @@ import os
 if API__connection__status__: #connection check
     print(f"[API HANDLER] Connection status: {API__connection__status__}. Proceeding with API handler operations.")
 
+# --- MERGE JSON ---
+def merge_satcat_and_tle(satcat_data, tle_data):
+    """
+    Merge SATCAT and TLE data by NORAD_CAT_ID into a single list of dictionaries.
+    Works whether inputs are JSON strings or Python lists.
+    """
+    # Convert from JSON string if needed
+    if isinstance(satcat_data, str):
+        satcat_data = json.loads(satcat_data)
+    if isinstance(tle_data, str):
+        tle_data = json.loads(tle_data)
+
+    # Build a lookup for TLEs by NORAD_CAT_ID
+    tle_lookup = {tle['NORAD_CAT_ID']: tle for tle in tle_data}
+
+    # Merge corresponding entries
+    merged = []
+    for sat in satcat_data:
+        norad_id = sat.get('NORAD_CAT_ID')
+        combined = sat.copy()
+        if norad_id in tle_lookup:
+            combined.update(tle_lookup[norad_id])
+        merged.append(combined)
+
+    print(f"[MERGE] Combined {len(merged)} records from SATCAT and TLE data.")
+    return merged
+
+
 # ----- API DATA QUERIES -----
 def get_all_active_SATCAT(limit=None):
     stc=get_stc()
@@ -32,11 +60,12 @@ def get_all_active_SATCAT(limit=None):
         tle_data = list(latest_tle.values())
 
         print(f"[API HANDLER] Retrieved SATCAT data. Number of records: {len(tle_data)}")
-        return tle_data
+        return merge_satcat_and_tle(satcat_data, tle_data)
     
     except Exception as e:
         print(f"[!API HANDLER ERROR!] Exception during SATCAT query: {e}")
         return None
+
     
 #  type based queries
 def get_satcat_type(limit=None, type_name="PAYLOAD"):
@@ -64,7 +93,7 @@ def get_satcat_type(limit=None, type_name="PAYLOAD"):
         tle_data = list(latest_tle.values())
         
         print(f"[API HANDLER] Retrieved {type_name} SATCAT data. Number of records: {len(satcat_data)}")
-        return tle_data
+        return merge_satcat_and_tle(satcat_data, tle_data)
     except Exception as e:
         print(f"[!API HANDLER ERROR!] Exception during {type_name} SATCAT query: {e}")
         return None
