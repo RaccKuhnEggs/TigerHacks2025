@@ -47,3 +47,11 @@ async def get_satcat_by_type(type_name: str, limit: int = 100):
 
 if __name__ == "__main__":
     print("[MAIN] Starting backend main execution.")
+    import os
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host=os.getenv("HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", 80)),
+        reload=False
+    )
