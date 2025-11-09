@@ -1,5 +1,7 @@
-from src import API__connection__status__, __URL__, __URL_BASE__
+from src import API__connection__status__, __URL__, __URL_BASE__, get_stc, API_login
 import requests
+import json
+from skyfield.api import EarthSatellite
 from dotenv import load_dotenv
 from spacetrack import SpaceTrackClient
 import os
@@ -8,82 +10,53 @@ if API__connection__status__: #connection check
     print(f"[API HANDLER] Connection status: {API__connection__status__}. Proceeding with API handler operations.")
 
 
-# ----- SPACE TRACK SESSION LOG IN -----
+# ----- HELPER FUNCTIONS -----
+def tle_to_json(raw_input):
+    # Step 1: Parse the outer JSON
+    outer_data = json.loads(raw_input)
 
-stc_session = None # Global session variable
+    # Step 2: Parse the inner JSON string
+    sat_list = json.loads(outer_data["satcat_data"])
 
-def API_login():
-    login_url = __URL_BASE__ + "ajaxauth/login"
-    response = requests.get(login_url)
+    # Step 3: Convert each to a structured dict (here adding placeholders for TLE lines)
+    structured_data = []
+    for sat in sat_list:
+        structured_data.append({
+            "NORAD_CAT_ID": sat["NORAD_CAT_ID"],
+            "PERIOD": sat["PERIOD"],
+            "INCLINATION": sat["INCLINATION"],
+            "APOGEE": sat["APOGEE"],
+            "PERIGEE": sat["PERIGEE"],
+            "TLE": {
+                "line1": None,
+                "line2": None
+            }
+        })
 
-    load_dotenv()
+    # Step 4: Save as JSON
+    with open("satellite_data.json", "w") as f:
+        json.dump(structured_data, f, indent=2)
 
-    username = os.getenv("SPACE_TRACK_USER")
-    password = os.getenv("SPACE_TRACK_PASS")
-    if not username or not password:
-        print("[!API HANDLER ERROR!] Missing Space-Track credentials in .env file.")
+    return structured_data
+    
+#  type based queries
+def get_satcat_type(limit=None, type_name="PAYLOAD"):
+    stc=get_stc()
+    type_name=type_name.upper()
+
+    try:
+        satcat_data = stc.satcat(object_type=type_name, decay = "null-val", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "TYPE", "COUNTRY", "RCS_SIZE", "LAUNCH"])
+        
+        if isinstance(satcat_data, str):
+            satcat_data = json.loads(satcat_data)
+        norad_ids = [item['NORAD_CAT_ID'] for item in satcat_data]
+
+        tle_data = stc.tle_latest(norad_cat_id=norad_ids, format="json", limit=limit, predicates=["NORAD_CAT_ID", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE"])
+        
+        
+        print(f"[API HANDLER] Retrieved {type_name} SATCAT data. Number of records: {len(satcat_data)}")
+        return tle_data
+    except Exception as e:
+        print(f"[!API HANDLER ERROR!] Exception during {type_name} SATCAT query: {e}")
         return None
     
-    global stc_session
-
-    if stc_session is not None:
-        print("[API HANDLER] Already logged in.")
-        return stc_session
-
-    try:    
-        stc_session = SpaceTrackClient(identity=username, password=password)
-        stc_session.tle_latest(limit=1, format="json")
-        print(f"[API HANDLER] Logged into Space-Track.org as user: {username}")
-        return stc_session
-
-    except Exception as e:
-        print(f"[!API HANDLER ERROR!] Exception during API login: {e}")
-        return None
-
-def get_stc():
-    global stc_session
-    if stc_session is None:
-        stc_session = API_login()
-    return stc_session
-
-# ----- API DATA QUERIES -----
-def get_all_active_SATCAT(limit=None):
-    stc=get_stc()
-    try:
-        stc_general_response = stc.satcat(query="DECAY=nullval", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "TYPE", "COUNTRY", "RCS", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE","LAUNCH_DATE"])
-        print(f"[API HANDLER] Retrieved SATCAT data. Number of records: {len(stc_general_response)}")
-        return stc_general_response
-    except Exception as e:
-        print(f"[!API HANDLER ERROR!] Exception during SATCAT query: {e}")
-        return None
-    
-#  type based SATCAT queries 
-def get_rocket_body_SATCAT(limit=None): #rocket bodies only
-    stc=get_stc()
-    try:
-        stc_rocket_response = stc.satcat(query="OBJECT_TYPE='ROCKET BODY'&DECAY=nullval", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "TYPE", "COUNTRY", "RCS", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE","LAUNCH_DATE"])
-        print(f"[API HANDLER] Retrieved Rocket Body SATCAT data. Number of records: {len(stc_rocket_response)}")
-        return stc_rocket_response
-    except Exception as e:
-        print(f"[!API HANDLER ERROR!] Exception during Rocket Body SATCAT query: {e}")
-        return None
-    
-def get_payload_SATCAT(limit=None): #payload only
-    stc=get_stc()
-    try:
-        stc_payload_response = stc.satcat(query="OBJECT_TYPE='PAYLOAD'&DECAY=nullval", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "TYPE", "COUNTRY", "RCS", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE","LAUNCH_DATE"])
-        print(f"[API HANDLER] Retrieved Payload SATCAT data. Number of records: {len(stc_payload_response)}")
-        return stc_payload_response
-    except Exception as e:
-        print(f"[!API HANDLER ERROR!] Exception during Payload SATCAT query: {e}")
-        return None
-
-def get_debris_SATCAT(limit=None): #debris only
-    stc=get_stc()
-    try:
-        stc_debris_response = stc.satcat(query="OBJECT_TYPE='DEBRIS'&DECAY=nullval", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "TYPE", "COUNTRY", "RCS", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE","LAUNCH_DATE"])
-        print(f"[API HANDLER] Retrieved Debris SATCAT data. Number of records: {len(stc_debris_response)}")
-        return stc_debris_response
-    except Exception as e:
-        print(f"[!API HANDLER ERROR!] Exception during Debris SATCAT query: {e}")
-        return None
