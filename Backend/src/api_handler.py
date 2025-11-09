@@ -20,9 +20,19 @@ def get_all_active_SATCAT(limit=None):
 
         tle_data = stc.tle_latest(norad_cat_id=norad_ids, format="json", limit=limit, predicates=["NORAD_CAT_ID", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE"])
 
+        if isinstance(tle_data, str):
+            tle_data = json.loads(tle_data)
+
+        latest_tle = {}
+        for tle in tle_data:
+            norad_id = tle['NORAD_CAT_ID']
+            if norad_id not in latest_tle:
+                latest_tle[norad_id] = tle
+
+        tle_data = list(latest_tle.values())
 
         print(f"[API HANDLER] Retrieved SATCAT data. Number of records: {len(tle_data)}")
-        return satcat_data
+        return tle_data
     
     except Exception as e:
         print(f"[!API HANDLER ERROR!] Exception during SATCAT query: {e}")
@@ -42,6 +52,16 @@ def get_satcat_type(limit=None, type_name="PAYLOAD"):
 
         tle_data = stc.tle_latest(norad_cat_id=norad_ids, format="json", limit=limit, predicates=["NORAD_CAT_ID", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE"])
         
+        if isinstance(tle_data, str):
+            tle_data = json.loads(tle_data)
+
+        latest_tle = {}
+        for tle in tle_data:
+            norad_id = tle['NORAD_CAT_ID']
+            if norad_id not in latest_tle:
+                latest_tle[norad_id] = tle
+
+        tle_data = list(latest_tle.values())
         
         print(f"[API HANDLER] Retrieved {type_name} SATCAT data. Number of records: {len(satcat_data)}")
         return tle_data
