@@ -10,7 +10,8 @@ def get_db_connection():
             host=os.getenv("SQL_HOST"),
             database=os.getenv("SQL_DATABASE"),
             user =os.getenv("SQL_USER"),
-            password=os.getenv("SQL_PASSWORD")
+            password=os.getenv("SQL_PASSWORD"),
+            port = int(os.getenv("SQL_PORT"))
         )
         print("[DB CLIENT] Successfully connected to the database.")
         return conn
