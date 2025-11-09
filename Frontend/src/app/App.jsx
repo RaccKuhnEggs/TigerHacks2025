@@ -1,9 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Navbar from './Navbar.jsx';
-import SatelliteVisualizer from './SatelliteVisualizer';
-import About from './About';
-import Features from './Features';
+import Navbar from './navbar.jsx';
+import SatelliteVisualizer from './satellite_visualizer.jsx';
+import About from './about.jsx';
+import Features from './features.jsx';
 import '../styles/home.css';
 
 // Protected Route wrapper component
@@ -63,7 +63,7 @@ function Home() {
           </h1>
           <p className="main-subtitle">
             Explore thousands of satellites orbiting Earth with our immersive 3D visualization platform. 
-            From the ISS to communication satellites, witness space like never before.
+            From the ISS to space debris, interact with orbital objects like never before.
           </p>
           <button className="explore-button" onClick={() => loginWithRedirect()}>
             Start Exploring

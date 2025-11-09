@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
@@ -9,26 +9,23 @@ const Navbar = () => {
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const isVisualizerPage = location.pathname === '/visualizer';
 
-  // Reset navbar visibility when navigating away from visualizer
   useEffect(() => {
-    if (!isVisualizerPage) {
-      setIsNavbarVisible(true);
-      // Ensure scrolling is enabled when leaving visualizer
-      document.body.style.overflow = 'auto';
-    } else {
+    // Set navbar invisible if on visualizer page
+    if (isVisualizerPage) {
       setIsNavbarVisible(false);
+    } else {
+      setIsNavbarVisible(true);
+      document.body.style.overflow = 'auto';
     }
   }, [isVisualizerPage]);
 
-  // Prevent body scroll ONLY when navbar is open on visualizer page
   useEffect(() => {
-    // Only lock scroll if we're on visualizer AND navbar is visible
+    // Do not let user scroll if on visualizer page
     if (isVisualizerPage && isNavbarVisible) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-
   }, [isVisualizerPage, isNavbarVisible]);
 
   const toggleNavbar = () => {
@@ -39,7 +36,7 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Hamburger Menu Button - Only visible in visualizer when navbar is hidden */}
+      {/* Hamburger Menu Button */}
       {isVisualizerPage && !isNavbarVisible && (
         <button 
           className="navbar-toggle-btn"
@@ -50,7 +47,7 @@ const Navbar = () => {
         </button>
       )}
 
-      {/* Backdrop - rendered BEFORE navbar to be behind it */}
+      {/* Navbar Backdrop */}
       {isVisualizerPage && isNavbarVisible && (
         <div className="navbar-backdrop" onClick={toggleNavbar}></div>
       )}
@@ -94,7 +91,7 @@ const Navbar = () => {
             </button>
           )}
 
-          {/* Close button - Only visible in visualizer when navbar is open */}
+          {/* Close button */}
           {isVisualizerPage && isNavbarVisible && (
             <button 
               className="navbar-close-btn"

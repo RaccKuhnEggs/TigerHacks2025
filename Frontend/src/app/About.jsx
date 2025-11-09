@@ -1,11 +1,10 @@
-import React from 'react';
 import '../styles/about.css';
 
 function About() {
 
   return (
     <div className="about-container">
-      {/* Project Info Section */}
+      {/* Project Info */}
       <section className="project-section">
         <h2 className="section-title">The LiteView Project</h2>
         <p className="project-description">
@@ -15,13 +14,13 @@ function About() {
           we bring outer space straight to your screen.
         </p>
       </section>
-      {/* Hero Section */}
-      <section className="about-hero-section">
-        <div className="about-hero-content">
-          <h1 className="about-hero-title">
+      {/* Team Info */}
+      <section className="about-team-section">
+        <div className="about-team-content">
+          <h1 className="about-team-title">
             About <span className="highlight">Our Team</span>
           </h1>
-          <p className="about-hero-subtitle">
+          <p className="about-team-subtitle">
             We are a team of 3 students at the University of Missouri: Supreet Aradhya, Ashton Kuhn, 
             and Carter Thoe. Our mission is to make satellite tracking accessible, 
             educational, and visually intriguing for everyone for space enthusiasts around the globe.

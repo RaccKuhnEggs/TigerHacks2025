@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { calculateSatellitePosition, createOrbitPath, ISS_PARAMS } from './SatPlacer';
+import { calculateSatellitePosition, createOrbitPath, ISS_PARAMS } from './sat_placer';
 
 export default function SatelliteVisualizer() {
   const mountRef = useRef(null);
