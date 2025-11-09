@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { calculateSatellitePosition, createOrbitPath, updateSatellitePosition, ISS_PARAMS } from './Sat_placer.jsx';
+import { RAW_SATELLITES } from './too_many_lites.jsx';
 
 
 export default function SatelliteVisualizer() {
@@ -179,6 +180,15 @@ export default function SatelliteVisualizer() {
       }
     );
 
+    // ---------- Load Other Satellites ----------
+    for (const sat of RAW_SATELLITES) {
+      const satelliteGeo = new THREE.SphereGeometry(0.05);
+      const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const satellite = new THREE.Mesh(satelliteGeo, material);
+      updateSatellitePosition(satellite, sat);
+      console.log(satellite.position);
+      scene.add(satellite);
+    }
 
     // ---------- Animate ----------
     let animationId;

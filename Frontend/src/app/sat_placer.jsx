@@ -102,8 +102,22 @@ export function calculateSatellitePosition(params) {
     z: z * scale
   };
   
+  // NORMALIZE TO FIXED RADIUS (6.8 units)
+  const currentDistance = Math.sqrt(
+    scaledPosition.x ** 2 + 
+    scaledPosition.y ** 2 + 
+    scaledPosition.z ** 2
+  );
+  
+  const targetRadius = 6.8;
+  const normalizedPosition = {
+    x: (scaledPosition.x / currentDistance) * targetRadius,
+    y: (scaledPosition.y / currentDistance) * targetRadius,
+    z: (scaledPosition.z / currentDistance) * targetRadius
+  };
+  
   return {
-    position: scaledPosition,
+    position: normalizedPosition,
     orbitalData: {
       altitude: radius - EARTH_RADIUS_KM,
       velocity: calculateOrbitalVelocity(radius),
