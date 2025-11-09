@@ -1,3 +1,4 @@
+![Logo](Frontend/public/logo/lite-view-logo.jpg)
 # LiteView Web Application
 
 ## Frontend
