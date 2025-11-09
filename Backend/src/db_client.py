@@ -11,7 +11,7 @@ def get_db_connection():
             database=os.getenv("SQL_DATABASE"),
             user =os.getenv("SQL_USER"),
             password=os.getenv("SQL_PASSWORD"),
-            port = int(os.getenv("SQL_PORT"))
+            port = int(os.getenv("SQL_PORT", 3306))
         )
         print("[DB CLIENT] Successfully connected to the database.")
         return conn
