@@ -13,10 +13,9 @@ async def root():
 
 # ----- API ENDPOINTS -----
 @app.get("/satcat")
-async def get_satcat_data(limit: int = 10): # limit for testing
+async def get_satcat_data(limit: int = 100): 
     if not src.API__connection__status__:
         return {"error": "API connection is not active."}
-    
     satcat_data = API.get_all_active_SATCAT(limit=limit)
     if satcat_data is None:
         return {"error": "Failed to retrieve SATCAT data."}
@@ -47,3 +46,11 @@ async def get_satcat_by_type(type_name: str, limit: int = 100):
 
 if __name__ == "__main__":
     print("[MAIN] Starting backend main execution.")
+    import os
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host=os.getenv("HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", 8000)),
+        reload=False
+    )
