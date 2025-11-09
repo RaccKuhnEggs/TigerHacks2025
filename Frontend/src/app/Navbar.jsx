@@ -10,7 +10,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <ul className="nav-links">
-        <li href="/" ><img src="../public/logo/lite-view-logo.png" width="50"/></li>
+        <li href="/" ><img src="/logo/lite-view-logo.png" width="50"/></li>
         <li href="/" className="logo">Lite View</li>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>

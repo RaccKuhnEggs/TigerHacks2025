@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { calculateSatellitePosition, createOrbitPath, ISS_PARAMS } from './SatPlacer';
 
 export default function SatelliteVisualizer() {
   const mountRef = useRef(null);
@@ -45,14 +46,70 @@ export default function SatelliteVisualizer() {
     loader.setDRACOLoader(dracoLoader);
 
 
+    // ------Load Star Background------
+    const textureLoader = new THREE.TextureLoader();
+    let skybox;
+
+    textureLoader.load(
+      '/SpaceBackground.jpg',
+      (texture) => {
+        
+        const geometry = new THREE.SphereGeometry(500, 60, 40);
+        geometry.scale(1, 1, 1); // Invert the sphere to see inside
+        const material = new THREE.MeshStandardMaterial({
+          map: texture,
+          side: THREE.BackSide
+        });
+
+
+        const skybox = new THREE.Mesh(geometry, material);
+        scene.add(skybox);
+        
+      },
+      // Progress callback (optional)
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      },
+      // Error callback
+      (error) => {
+        console.error('Error loading background texture:', error);
+      }
+    );
+
+    // ---------- Add Fog ----------
+    scene.fog = new THREE.Fog(0x000000, 100, 500);
+
+    // ---------- OrbitControls ----------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.minDistance = 1.5;
+    controls.maxDistance = 50;
+    controls.enablePan = false;
+    controls.target.set(0, 0, 0);
+    controls.update();
+
+
     // ---------- Load Globe ----------
     let globe;
+    let center;
     loader.load(
       '/Globe.glb',
       (gltf) => {
         globe = gltf.scene;
-        globe.position.set(0, -1, 0);
-        globe.scale.set(0.1, 0.1, 0.1);
+        globe.position.set(0, 0, 0);
+        globe.scale.set(.8, .8, .8);
+
+        // Update world matrix after scaling
+        globe.updateMatrixWorld(true);
+        globe.rotation.y = THREE.MathUtils.degToRad(30); // Rotate to align texture properly
+        // Calculate bounding box to find the model's center
+        const box = new THREE.Box3().setFromObject(globe);
+        const center = box.getCenter(new THREE.Vector3());
+
+        // Offset the globe position to center it at origin
+        globe.position.x = -center.x;
+        globe.position.y = -center.y;
+        globe.position.z = -center.z;
+
 
 
         scene.add(globe);
@@ -61,6 +118,8 @@ export default function SatelliteVisualizer() {
       (error) => console.error(error)
     );
 
+
+
     // ---------- Load ISS ----------
     let ISS;
     loader.load(
@@ -68,7 +127,7 @@ export default function SatelliteVisualizer() {
       (gltf) => {
         ISS = gltf.scene;
         ISS.position.set(0, 0, 0);
-        ISS.scale.set(1, 1, 1);
+        ISS.scale.set(.05, .05, .05);
 
         ISS.traverse((child) => {
           if (child.isMesh) {
@@ -76,6 +135,10 @@ export default function SatelliteVisualizer() {
             child.frustumCulled = true;
           }
         });
+        const { position } = calculateSatellitePosition(ISS_PARAMS);
+        ISS.position.set(position.x, position.y, position.z);
+        ISS.rotation.x= Math.PI / 2;
+        
 
         scene.add(ISS);
       },
@@ -83,20 +146,15 @@ export default function SatelliteVisualizer() {
       (error) => console.error(error)
     );
 
-    // ---------- Camera position ----------
-    camera.position.z = 2;
-
-    // ---------- OrbitControls ----------
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 1.5;
-    controls.maxDistance = 10;
-    controls.enablePan = false;
-    controls.target.set(0, 0, 0);
-    controls.update();
 
     // ---------- Animate ----------
     const animate = () => {
-      if (globe) globe.rotation.y += 0.001;
+      if (ISS) {
+
+        ISS.lookAt(new THREE.Vector3(0, 0, 0));
+
+
+      }
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
