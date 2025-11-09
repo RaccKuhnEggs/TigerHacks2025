@@ -99,15 +99,15 @@ def insert_tle_data(tle_records):
                 PERIGEE=VALUES(PERIGEE)
         """
         for record in tle_records:
-            data_tuple = (
-                record['NORAD_CAT_ID'],
-                record['PERIOD'],
-                record['INCLINATION'],
-                record['APOGEE'],
-                record['PERIGEE']
-            )
-            cursor.execute(insert_query, data_tuple)
-        
+            data_tuple = ((
+                int(record['NORAD_CAT_ID']),
+                float(record['PERIOD']),
+                float(record['INCLINATION']),
+                float(record['APOGEE']),
+                float(record['PERIGEE'])
+            ))
+
+        cursor.executemany(insert_query, data_tuple)
         conn.commit()
         print(f"[DB HANDLER] Inserted/Updated {cursor.rowcount} records into tle_data table.")
         return True
@@ -115,5 +115,33 @@ def insert_tle_data(tle_records):
         print(f"[!DB HANDLER ERROR!] Exception during data insertion: {e}")
         conn.rollback()
         return False
+    finally:
+        cursor.close()
+
+def prune_decayed():
+    if conn is None:
+        print("[DB HANDLER] No database connection available.")
+        return False
+    
+    try:
+        cursor = conn.cursor()
+
+        # Delete satcat_data entries whose NORAD_CAT_ID does not exist in tle_data
+        delete_query = """
+            DELETE FROM satcat_data
+            WHERE NORAD_CAT_ID NOT IN (SELECT NORAD_CAT_ID FROM tle_data)
+        """
+        cursor.execute(delete_query)
+        deleted_count = cursor.rowcount
+
+        conn.commit()
+        print(f"[DB HANDLER] Pruned {deleted_count} decayed records from satcat_data.")
+        return True
+
+    except Exception as e:
+        print(f"[!DB HANDLER ERROR!] Exception during pruning: {e}")
+        conn.rollback()
+        return False
+
     finally:
         cursor.close()
