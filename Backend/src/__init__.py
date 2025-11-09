@@ -2,12 +2,8 @@ __version__ = "0.1.0"
 print(f"[INIT] Backend package version: {__version__}: initialized.")
 
 import math
-<<<<<<< HEAD
-from .api_client import API_connection_test, query_check, __URL__, __URL_BASE__, API_login, stc_session, get_stc
-=======
-from api_client import API_connection_test, query_check, __URL__, __URL_BASE__, API_login, stc_session, get_stc
-from db_client import get_db_connection, conn
->>>>>>> backend-database
+from src.api_client import API_connection_test, query_check, __URL__, __URL_BASE__, API_login, stc_session, get_stc
+from src.db_client import get_db_connection, conn
 
 stc_session = get_stc()  # Attempt to log in upon initialization
 

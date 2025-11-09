@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-version: '3.9'
-=======
 version: '3.8'
->>>>>>> backend-database
 
 services:
   backend:
