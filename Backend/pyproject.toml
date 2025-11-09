@@ -21,6 +21,7 @@ dependencies = [
     "requests",
     "python-dotenv",
     "spacetrack",
+    "mysql-connector-python"
 ]
 
 [project.optional-dependencies]
