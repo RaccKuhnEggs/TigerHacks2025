@@ -47,13 +47,3 @@ async def get_satcat_by_type(type_name: str, limit: int = 20):
 
 if __name__ == "__main__":
     print("[MAIN] Starting backend main execution.")
-
-    if src.API__connection__status__:
-        print("[MAIN] API connection is active. Proceeding to fetch SATCAT data.")
-        satcat_data = API.get_all_active_SATCAT(limit=10)  # Fetch a limited number of records for testing
-        if satcat_data:
-            print(f"[MAIN] Fetched SATCAT data: {satcat_data}")
-        else:
-            print("[MAIN] Failed to fetch SATCAT data.")
-    else:
-        print("[MAIN] API connection is not active. Cannot proceed with data fetching.")
