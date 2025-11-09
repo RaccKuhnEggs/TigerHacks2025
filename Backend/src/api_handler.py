@@ -1,7 +1,6 @@
 from src import API__connection__status__, __URL__, __URL_BASE__, get_stc, API_login
 import requests
 import json
-from skyfield.api import EarthSatellite
 from dotenv import load_dotenv
 from spacetrack import SpaceTrackClient
 import os

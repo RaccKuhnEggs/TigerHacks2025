@@ -21,7 +21,6 @@ dependencies = [
     "requests",
     "python-dotenv",
     "spacetrack",
-    "skyfield"
 ]
 
 [project.optional-dependencies]
