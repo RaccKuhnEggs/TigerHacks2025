@@ -9,35 +9,25 @@ import os
 if API__connection__status__: #connection check
     print(f"[API HANDLER] Connection status: {API__connection__status__}. Proceeding with API handler operations.")
 
+# ----- API DATA QUERIES -----
+def get_all_active_SATCAT(limit=None):
+    stc=get_stc()
+    try:
+        satcat_data = stc.satcat(decay="null-val", format="json", limit=limit, predicates=["NORAD_CAT_ID", "OBJECT_NAME", "OBJECT_TYPE", "COUNTRY", "RCS_SIZE", "LAUNCH"])
 
-# ----- HELPER FUNCTIONS -----
-def tle_to_json(raw_input):
-    # Step 1: Parse the outer JSON
-    outer_data = json.loads(raw_input)
+        if isinstance(satcat_data, str):
+            satcat_data = json.loads(satcat_data)
+        norad_ids = [item['NORAD_CAT_ID'] for item in satcat_data]
 
-    # Step 2: Parse the inner JSON string
-    sat_list = json.loads(outer_data["satcat_data"])
+        tle_data = stc.tle_latest(norad_cat_id=norad_ids, format="json", limit=limit, predicates=["NORAD_CAT_ID", "PERIOD", "INCLINATION", "APOGEE", "PERIGEE"])
 
-    # Step 3: Convert each to a structured dict (here adding placeholders for TLE lines)
-    structured_data = []
-    for sat in sat_list:
-        structured_data.append({
-            "NORAD_CAT_ID": sat["NORAD_CAT_ID"],
-            "PERIOD": sat["PERIOD"],
-            "INCLINATION": sat["INCLINATION"],
-            "APOGEE": sat["APOGEE"],
-            "PERIGEE": sat["PERIGEE"],
-            "TLE": {
-                "line1": None,
-                "line2": None
-            }
-        })
 
-    # Step 4: Save as JSON
-    with open("satellite_data.json", "w") as f:
-        json.dump(structured_data, f, indent=2)
-
-    return structured_data
+        print(f"[API HANDLER] Retrieved SATCAT data. Number of records: {len(tle_data)}")
+        return satcat_data
+    
+    except Exception as e:
+        print(f"[!API HANDLER ERROR!] Exception during SATCAT query: {e}")
+        return None
     
 #  type based queries
 def get_satcat_type(limit=None, type_name="PAYLOAD"):
