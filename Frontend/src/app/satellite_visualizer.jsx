@@ -3,7 +3,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+<<<<<<< HEAD:Frontend/src/app/satellite_visualizer.jsx
 import { calculateSatellitePosition, createOrbitPath, ISS_PARAMS } from './sat_placer';
+=======
+import { calculateSatellitePosition, createOrbitPath, updateSatellitePosition, ISS_PARAMS } from './SatPlacer';
+>>>>>>> 3c2dc9b (Fixes for sat viewer):Frontend/src/app/SatelliteVisualizer.jsx
 
 export default function SatelliteVisualizer() {
   const mountRef = useRef(null);
@@ -81,10 +85,11 @@ export default function SatelliteVisualizer() {
 
     // ---------- OrbitControls ----------
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 1.5;
+    controls.minDistance = 7;
     controls.maxDistance = 50;
     controls.enablePan = false;
     controls.target.set(0, 0, 0);
+    camera.position.set(15, 0, 0);
     controls.update();
 
 
@@ -100,7 +105,7 @@ export default function SatelliteVisualizer() {
 
         // Update world matrix after scaling
         globe.updateMatrixWorld(true);
-        globe.rotation.y = THREE.MathUtils.degToRad(30); // Rotate to align texture properly
+        globe.rotation.y = THREE.MathUtils.degToRad(180); // Rotate to align texture properly
         // Calculate bounding box to find the model's center
         const box = new THREE.Box3().setFromObject(globe);
         const center = box.getCenter(new THREE.Vector3());
@@ -127,7 +132,7 @@ export default function SatelliteVisualizer() {
       (gltf) => {
         ISS = gltf.scene;
         ISS.position.set(0, 0, 0);
-        ISS.scale.set(.05, .05, .05);
+        ISS.scale.set(.06, .06, .06);
 
         ISS.traverse((child) => {
           if (child.isMesh) {
@@ -137,7 +142,6 @@ export default function SatelliteVisualizer() {
         });
         const { position } = calculateSatellitePosition(ISS_PARAMS);
         ISS.position.set(position.x, position.y, position.z);
-        ISS.rotation.x= Math.PI / 2;
         
 
         scene.add(ISS);
@@ -151,7 +155,8 @@ export default function SatelliteVisualizer() {
     const animate = () => {
       if (ISS) {
 
-        ISS.lookAt(new THREE.Vector3(0, 0, 0));
+       
+        updateSatellitePosition(ISS, ISS_PARAMS);
 
 
       }
