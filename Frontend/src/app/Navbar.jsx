@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
+import React from 'react';
 
 const Navbar = () => {
   const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();

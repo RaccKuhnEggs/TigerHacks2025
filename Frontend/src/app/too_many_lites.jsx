@@ -1,3 +1,4 @@
+import React from 'react';
 
 /* --- Example raw data source (orbital elements in km/minutes/degrees) --- */
 const RAW_SATELLITES = [

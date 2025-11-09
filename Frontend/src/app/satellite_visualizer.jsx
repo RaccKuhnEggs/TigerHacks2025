@@ -5,6 +5,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { calculateSatellitePosition, createOrbitPath, updateSatellitePosition, ISS_PARAMS } from './Sat_placer.jsx';
 import { RAW_SATELLITES } from './too_many_lites.jsx';
+import { fetchSatelliteData } from './api.js';
+import React from 'react'
 
 
 export default function SatelliteVisualizer() {
@@ -181,22 +183,40 @@ export default function SatelliteVisualizer() {
     );
 
     // ---------- Load Other Satellites ----------
-    for (const sat of RAW_SATELLITES) {
-      const satelliteGeo = new THREE.SphereGeometry(0.05);
-      const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-      const satellite = new THREE.Mesh(satelliteGeo, material);
-      updateSatellitePosition(satellite, sat);
-      console.log(satellite.position);
-      scene.add(satellite);
-    }
+    let satsdata = [];
+    let sats=[];
+    const loadSatellites = async () => {
 
+      try {
+        satsdata = await fetchSatelliteData();
+        for (const satdata of satsdata) {
+          const satelliteGeo = new THREE.SphereGeometry(0.1);
+          const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+          const satellite = new THREE.Mesh(satelliteGeo, material);
+          sats=[...sats,satellite];
+          updateSatellitePosition(satellite, satdata);
+          console.log(satellite.position);
+          scene.add(satellite);
+        }
+      } catch (error) {
+        console.log('Error loading satellite data:', error);
+      }
+    };
+    
+    // Start loading satellites
+    loadSatellites();
     // ---------- Animate ----------
     let animationId;
     const animate = () => {
       if (ISS) {
         updateSatellitePosition(ISS, ISS_PARAMS);
       }
-      
+      if (sats) {
+        for (let a = 0; a < sats.length; a++) {
+          updateSatellitePosition(sats[a], satsdata[a]);
+        }
+      }
+
       // Only render if everything is loaded
       if (isFullyLoaded) {
         renderer.render(scene, camera);

@@ -5,6 +5,7 @@ import SatelliteVisualizer from './satellite_visualizer.jsx';
 import About from './About.jsx';
 import Features from './Features.jsx';
 import '../styles/home.css';
+import React from 'react';
 
 // Protected Route wrapper component
 function ProtectedRoute({ children }) {

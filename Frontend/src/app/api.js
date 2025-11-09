@@ -1,4 +1,4 @@
-const API_URL = 'http://liteview.216.128.151.36.sslip.io/satcat';
+const API_URL = '/api/satcat';
 
 /**
  * Fetches satellite catalog data from the API
