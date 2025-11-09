@@ -13,7 +13,7 @@ async def root():
 
 # ----- API ENDPOINTS -----
 @app.get("/satcat")
-async def get_satcat_data(limit: int = 10): # limit for testing
+async def get_satcat_data(limit: int = None): 
     if not src.API__connection__status__:
         return {"error": "API connection is not active."}
     
@@ -24,7 +24,7 @@ async def get_satcat_data(limit: int = 10): # limit for testing
     return {"satcat_data": satcat_data}
 
 @app.get("/satcat/{type_name}")
-async def get_satcat_by_type(type_name: str, limit: int = 100):
+async def get_satcat_by_type(type_name: str, limit: int = None):
     if not src.API__connection__status__:
         return {"error": "API connection is not active."}
     
