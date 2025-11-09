@@ -3,3 +3,4 @@ uvicorn
 requests
 python-dotenv
 spacetrack
+mysql-connector-python
