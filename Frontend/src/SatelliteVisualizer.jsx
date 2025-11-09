@@ -44,14 +44,6 @@ export default function SatelliteVisualizer() {
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    // ---------- Clipping planes ----------
-    const clippingPlanes = [
-      new THREE.Plane(new THREE.Vector3(0, 0.99, 0), 1),   // bottom
-      new THREE.Plane(new THREE.Vector3(-1, 0, 0), 2),     // right
-      new THREE.Plane(new THREE.Vector3(1, 0, 0), 2),      // left
-      new THREE.Plane(new THREE.Vector3(0, 0, 1), 2),      // front
-      new THREE.Plane(new THREE.Vector3(0, 0, -1), 2),     // back
-    ];
 
     // ---------- Load Globe ----------
     let globe;
@@ -62,12 +54,6 @@ export default function SatelliteVisualizer() {
         globe.position.set(0, -1, 0);
         globe.scale.set(0.1, 0.1, 0.1);
 
-        globe.traverse((child) => {
-          if (child.isMesh) {
-            child.material.clippingPlanes = clippingPlanes;
-            child.material.side = THREE.DoubleSide;
-          }
-        });
 
         scene.add(globe);
       },
