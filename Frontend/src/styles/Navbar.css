@@ -4,13 +4,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #1a1a2e;
-  color: white;
+  background-color: white;
+  color: #1a1a2e;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: 60px;
   position: relative;
   z-index: 1000;
   transition: transform 0.3s ease-in-out;
+  font-family: Helvetica, sans-serif;
 }
 
 .navbar-left {
@@ -22,7 +23,7 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: white;
+  color: #1a1a2e;
   font-size: 24px;
   font-weight: bold;
 }
@@ -46,7 +47,7 @@
 }
 
 .navbar-links a {
-  color: white;
+  color: #1a1a2e;
   text-decoration: none;
   font-size: 16px;
   transition: color 0.3s;
@@ -85,11 +86,13 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2000;
+  z-index: 2001; /* Higher than backdrop */
+  pointer-events: auto; /* Ensure navbar is clickable */
 }
 
 .navbar-hidden {
   transform: translateY(-100%);
+  pointer-events: none; /* Don't block clicks when hidden */
 }
 
 /* Hamburger Toggle Button */
@@ -125,9 +128,9 @@
 
 /* Close Button */
 .navbar-close-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(88, 166, 255, 0.1);
+  border: 2px solid #58a6ff;
+  color: #1a1a2e;
   width: 35px;
   height: 35px;
   border-radius: 5px;
@@ -152,8 +155,9 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1500;
+  z-index: 2000; /* Behind navbar but above everything else */
   backdrop-filter: blur(2px);
+  cursor: pointer; /* Show it's clickable */
 }
 
 /* Responsive Design */
@@ -161,17 +165,17 @@
   .navbar {
     padding: 10px 20px;
   }
-
+  
   .navbar-links {
     gap: 15px;
     font-size: 14px;
   }
-
+  
   .navbar-toggle-btn {
     width: 45px;
     height: 45px;
   }
-
+  
   .hamburger-icon {
     font-size: 20px;
   }
@@ -181,7 +185,7 @@
   .navbar-links {
     display: none;
   }
-
+  
   .navbar {
     justify-content: space-between;
   }

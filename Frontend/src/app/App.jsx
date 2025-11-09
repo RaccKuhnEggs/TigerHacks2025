@@ -24,7 +24,6 @@ function Layout() {
       <div style={{ 
         height: isVisualizerPage ? '100vh' : 'calc(100vh - 60px)', 
         width: '100vw', 
-        overflow: 'hidden',
         position: isVisualizerPage ? 'fixed' : 'relative',
         top: isVisualizerPage ? '0' : 'auto'
       }}>
